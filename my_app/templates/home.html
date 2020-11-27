@@ -137,6 +137,13 @@
         #baths{
             font-size: 27px;
         }
+        #price{
+                color: #022b3a;
+                font-size: 25px;
+                font-weight: bold;
+                text-align: right;
+                padding-bottom: 5px;
+            }
         .center {
             display: block;
             margin-left: auto;
@@ -182,6 +189,13 @@
                             <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
 
                         </div>
+                    </div>
+                    <div class="col">
+                        {% if post.buy_or_rent ==  "Buy" %}
+                            <p id="price" class="article-content">{{ "${:,.2f}".format(post.price) }}</p>
+                        {% else %}
+                            <p id="price" class="article-content">{{ "${:,.2f}".format(post.price) }}/mo</p>
+                        {% endif %}
                     </div>
                     {% if post.buy_or_rent ==  "Buy" %}
                         <div id="rent-buy" class="col-"> For Sale! </div>

@@ -196,41 +196,7 @@
                     <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
                     <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
                 </div> -->
-                <div class="slideshow-container">
-                        <div class="mySlides fade">
-                            <img class="img-thumbnail article-img form-group center" src="{{url_for('static', filename='house_pictures/' + post.master_bedroom) }}"style="width:50%; height:50%">
-                        </div>
-                        <div class="mySlides fade">
-                            <img class="img-thumbnail article-img form-group center" src="{{ url_for('static', filename='house_pictures/') + post.master_bathroom }}" style="width:50%; height:50%">
-                        </div>
-                        <div class="mySlides fade">
-                            <img class="img-thumbnail article-img form-group center" src="{{ url_for('static', filename='house_pictures/') + post.kitchen }}"style="width:50%; height:50%">
-                        </div>
-                        <div class="mySlides fade">
-                            <img class="img-thumbnail article-img form-group center" src="{{ url_for('static', filename='house_pictures/') + post.outside_view }}" style="width:50%; height:50%">
-                        </div>
-                    {% if post.house_pictures is defined %}
-                        {% for optional_pic in post.house_pictures %}
-                            <div class="mySlides fade">
-                                <img class="img-thumbnail article-img form-group center" src="{{ url_for('static', filename='house_pictures/') + optional_pic }}" style="width:50%; height:50%">
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="mySlides fade">
-                            <img class="img-thumbnail article-img form-group center" src="{{ url_for('static', filename='house_pictures/default_house.jpg') }}" style="width:50%; height:50%">
-                        </div>
-                    </div>
-                    {% endif %}
-                <!-- Next and Previous buttons-->
-                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-                <a class="next" onclick="plusSlides(1)">&#10095;</a>
-                <!-- The dots/circles -->
-                <div style="text-align:center">
-                    <span class="dot" onclick="currentSlide(1)"></span>
-                    <span class="dot" onclick="currentSlide(2)"></span>
-                    <span class="dot" onclick="currentSlide(3)"></span>
-                    <span class="dot" onclick="currentSlide(4)"></span>
-                </div>
+                <img src="../static/house_pictures/{{post.outside_view}}" style="width:100%">
             </div>
                 <div class="row">
                     <div class="col">
