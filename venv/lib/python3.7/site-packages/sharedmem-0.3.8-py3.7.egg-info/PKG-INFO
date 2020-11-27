@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: sharedmem
+Version: 0.3.8
+Summary: Dispatch your trivially parallizable jobs with sharedmem. 
+Home-page: http://github.com/rainwoodman/sharedmem
+Author: Yu Feng
+Author-email: rainwoodman@gmail.com
+License: GPLv3
+Description: UNKNOWN
+Platform: UNKNOWN

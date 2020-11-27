@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <!-- here we use a main.css page. For flask, css and js files need to go in the static folder and we need to import in the
+        'main'.py file the url_for from the Flask library -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+
+
+    {% if title %}
+        <title>Houser - {{ title }}</title>
+    {% else %}
+        <title>Houser</title>
+    {% endif %}
+</head>
+<body>
+
+    <header class="site-header">
+        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+            <div class="container">
+                <a class="navbar-brand mr-4" href="/">Houser</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarToggle">
+                    <div class="navbar-nav mr-auto">
+                        <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
+                        <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
+                    </div>
+                    <!-- Navbar Right Side -->
+                    <div class="navbar-nav">
+                        {% if current_user.is_authenticated %}
+                            <a class="nav-item nav-link" href="{{ url_for('new_post') }}">New Post</a>
+                            <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
+                            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        {% else %}
+                            <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
+                            <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% block search_bar %}
+                <form class ="form-inline my-2 my-lg-0" method="GET">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" name="q">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+                {% endblock %}
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="container">
+        <div class="row">
+            <div class="col-md-8">
+            {% with messages = get_flashed_messages(with_categories='true') %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}{% block content %}{% endblock %}
+            </div>
+            <div class="col-md-4">
+
+                <div id='map' style='width: 350px; height: 250px;'></div>
+                <script>
+                    mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zZS1zYW50aWFnbzkwIiwiYSI6ImNraGlpaHlzMTFienAzMHBmdms1ODNjcTEifQ.mA4WMGbNBOQgaKcXy2FoPg';
+                    var map = new mapboxgl.Map({
+                    container: 'map',
+                    style: 'mapbox://styles/mapbox/streets-v11'
+                    });
+                </script>
+
+                {% block filter %}
+                <div class="col-md-8">
+                    <div class="content-section">
+                            <h3>David's Sidebar</h3>
+                            <form method="POST" action="/filter_search">
+                                A/C?<input type="checkbox" value="A/C" name="mycheckbox">
+                                Fully Equipped Kitchen?<input type="checkbox" value="Fully Equipped Kitchen" name="mycheckbox">
+                                WI-FI<input type="checkbox" value="WI-FI" name="mycheckbox">
+                                Washing Machine<input type="checkbox" value="Washing Machine" name="mycheckbox">
+                                Dryer<input type="checkbox" value="Dryer" name="mycheckbox">
+                                <input type="submit">
+                            </form>
+                    </div>
+                </div>
+                {% endblock %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <!-- map script -->
+    <script>
+
+		function display_map() {
+			mapboxgl.accessToken = "{{ mapbox_access_token }}"
+			var map = new mapboxgl.Map({
+			container: 'map',
+			style: 'mapbox://styles/jose-santiago90/ckhiit9jz10gs19n1hfg2bur5',
+			center: ['-66.206820', '18.232933'],
+			zoom: 6.8,
+			bearing: -17.6,
+			pitch:45
+			});
+			// fulscreen button
+			map.addControl(new mapboxgl.FullscreenControl());
+			// display a blue marker
+			{% for i in locations %}
+				var marker = new mapboxgl.Marker();
+				marker.setLngLat([{{i.longitud}},{{i.latitud}}]);
+				marker.addTo(map);
+ 			{% endfor %};
+	  		// Navigation marker at top-left corner
+	  		var nav = new mapboxgl.NavigationControl();
+	  			map.addControl(nav, 'top-left');
+	  		// change false to true, to get your location. Then, enable location in the browser.
+	  		map.addControl(new mapboxgl.GeolocateControl({
+	    			positionOptions: {
+	        			enableHighAccuracy: false
+	    			},
+	    		trackUserLocation: false
+			}));
+	  		// The 'building' layer in the mapbox-streets vector source contains building-height
+			// data from OpenStreetMap.
+			map.on('load', function() {
+			    // Insert the layer beneath any symbol layer.
+			    var layers = map.getStyle().layers;
+			    var labelLayerId;
+			    for (var i = 0; i < layers.length; i++) {
+			        if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+			            labelLayerId = layers[i].id;
+			            break;
+			        }
+			    }
+			    map.addLayer({
+			        'id': '3d-buildings',
+			        'source': 'composite',
+			        'source-layer': 'building',
+			        'filter': ['==', 'extrude', 'true'],
+			        'type': 'fill-extrusion',
+			        'minzoom': 15,
+			        'paint': {
+			            'fill-extrusion-color': '#aaa',
+			            // use an 'interpolate' expression to add a smooth transition effect to the
+			            // buildings as the user zooms in
+			            'fill-extrusion-height': [
+			                "interpolate", ["linear"], ["zoom"],
+			                15, 0,
+			                15.05, ["get", "height"]
+			            ],
+			            'fill-extrusion-base': [
+			                "interpolate", ["linear"], ["zoom"],
+			                15, 0,
+			                15.05, ["get", "min_height"]
+			            ],
+			            'fill-extrusion-opacity': .6
+			        }
+			    }, labelLayerId);
+			});
+		}
+		display_map();
+
+	</script>
+
+</body>
+</html>
+
+
+------this was previous layout -----
+
+
+
+
+{% extends 'layout.html' %}
+
+{% block content %}
+    {%  for post in posts.items %}
+
+        <!-- map links -->
+        <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+
+        <style>
+            .map-container {
+                max-width: 40%;
+                max-height: 10%;
+                margin-left: 60%;
+                margin-right: auto;
+                position: fixed;
+            }
+            .map-inputBox {
+                width: 50%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                box-sizing: border-box;
+            }
+            .map-button {
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+            }
+        </style>
+
+        <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                    <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                </div>
+                <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                <img class="img-thumbnail article-img form-group" src="{{ url_for('static', filename='house_pictures/' + post.master_bedroom) }}">
+                <img class="img-thumbnail article-img form-group" src="{{ url_for('static', filename='house_pictures/') + post.master_bathroom }}">
+                <img class="img-thumbnail article-img form-group" src="{{ url_for('static', filename='house_pictures/') + post.kitchen }}">
+                <img class="img-thumbnail article-img form-group" src="{{ url_for('static', filename='house_pictures/') + post.outside_view }}">
+                {% if post.house_pictures is defined %}
+                    {% for optional_pic in post.house_pictures %}
+                        <img class="img-thumbnail article-img form-group" src="{{ url_for('static', filename='house_pictures/') + optional_pic }}">
+                    {% endfor %}
+                {% else %}
+                    <img class="img-thumbnail article-img form-group" src="{{ url_for('static', filename='house_pictures/default_house.jpg') }}">
+                {% endif %}
+                <p class="article-content"> {{ post.content }}</p>
+                <p class="article-content"> {{ post.buy_or_rent }}</p>
+                <p class="article-content"> {{ post.address_line_1 }}</p>
+                <p class="article-content"> {{ post.address_line_2 }}</p>
+                <p class="article-content"> {{ post.city }}</p>
+                <p class="article-content"> {{ post.state_province_region }}</p>
+                <p class="article-content"> {{ post.zip_postal_code }}</p>
+                <p class="article-content"> Number of Bedrooms: {{ post.number_of_bedrooms }}</p>
+                <p class="article-content"> Number of Bathrooms: {{ post.number_of_bathrooms }}</p>
+                <p class="article-content"> Price: {{ "${:,.2f}".format(post.price) }}</p>
+                <p class="article-content">Amenities:</p>
+                {% for amenity in post.amenities %}
+                    <p class="article-content">{{ amenity }}</p>
+                {% endfor %}
+            </div>
+        </article>
+    {% endfor %}
+    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+            {% if posts.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+{% endblock content %}
+
+
+----this is the old home.html ----
+
+
+
+{% if post.author == current_user %}
+                        <div>
+                            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+                            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                        </div>
+                    {% endif %}
+
+
+ --------- modal for update/delte inside home.html

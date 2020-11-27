@@ -1,0 +1,260 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% block filter %}{% endblock %}
+
+    <!-- map links -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+
+
+    <style>
+        .map-container {
+            max-width: 40%;
+            max-height: 10%;
+            margin-left: 60%;
+            margin-right: auto;
+            position: fixed;
+        }
+        .map-inputBox {
+            width: 50%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        .map-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        .mapboxgl-popup {
+            max-width: 400px;
+            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        }
+        #article-box{
+            background-color: #e1e5f2;
+        }
+        #profile-pic{
+            position: relative;
+            left: 10px;
+        }
+        #profile-col{
+            position: relative;
+            left: -10px;
+        }
+        #rent-buy{
+            height: 45px;
+            text-align: right;
+            font-size: 30px;
+            padding-left: 5px;
+            padding-right: 5px;
+            color: white;
+            font-weight: bolder;
+            background-color: #1f7a8c;
+            border-radius: 5px
+        }
+        #username{
+            color: #1f7a8c;
+        }
+        #username:hover{
+            color: white;
+        }
+        #slideshow{
+            padding-bottom: 25px;
+        }
+        #address{
+            position: relative;
+            left: 0px;
+            margin-bottom: 0px;
+        }
+        #address2{
+            position: relative;
+            left: 0px;
+            margin-bottom: 0px;
+        }
+        #address3{
+            position: relative;
+            left: 0px;
+            margin-bottom: 0px;
+        }
+        #utilities-title{
+            position: relative;
+            top: 15px;
+            font-size: 25px;
+            color: #022b3a;
+            font-weight: bold;
+        }
+        #description-title{
+            position: relative;
+            top: 15px;
+            font-size: 25px;
+            color: #022b3a;
+            font-weight: bold;
+        }
+        #line{
+            margin-top: 0em;
+        }
+        #utility-list{
+            padding-left: 0px;
+            column-count: 2;
+            column-gap: 100px;
+            list-style-type: none;
+        }
+        #title{
+            padding-top: 0px;
+            color: #022b3a;
+        }
+        #price{
+            color: #022b3a;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+            padding-bottom: 5px;
+        }
+        #city{
+            color: #022b3a;
+            font-size: 20px;
+            font-weight: bold;
+            padding-bottom: 5px;
+        }
+        #bed-icon{
+            height: 50px;
+            width: 62px;
+        }
+        #bath-icon{
+            height: 50px;
+            width: 33px;
+        }
+        #beds{
+            font-size: 27px;
+        }
+        #baths{
+            font-size: 27px;
+        }
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+            }
+    </style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="content-section col-md-2 ">
+            <h3>Amenities</h3>
+                <form method="POST" action="/filter_search">
+                    <input type="checkbox" value="A/C" name="mycheckbox">
+                    <label for="A/C">A/C</label>
+                    <br>
+                    <input type="checkbox" value="Fully Equipped Kitchen" name="mycheckbox">
+                    <label for="Fully Equipped Kitchen">Full-Set Kitchen</label>
+                    <br>
+                    <input type="checkbox" value="WI-FI" name="mycheckbox">
+                    <label for="WI-FI">WI-FI</label>
+                    <br>
+                    <input type="checkbox" value="Washing Machine" name="mycheckbox">
+                    <label for="Washing Machine">Washing Machine</label>
+                    <br>
+                    <input type="checkbox" value="Dryer" name="mycheckbox">
+                    <label for="Dryer">Dryer</label>
+                    <br>
+                    <button class="btn" type="submit" style="background-color:#1F7A8C; color:white">Apply</button>
+                </form>
+        </div>
+    <div  class="col-md-6">
+    {%  for post in posts.items %}
+        <article id="article-box" class="media content-section">
+            <div  id="profile-row" class="media-body">
+                <div class="row">
+                    <div id="pic-col" class="col-">
+                        <img id="profile-pic" class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}" style="width:30px;height:30px;">
+                    </div>
+                    <div id="profile-col" class="col">
+                        <div class="article-metadata">
+                            <a id="username" class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                            <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+
+                        </div>
+                    </div>
+                    {% if post.buy_or_rent ==  "Buy" %}
+                        <div id="rent-buy" class="col-"> For Sale! </div>
+                    {% else %}
+                        <div id="rent-buy" class="col-"> For Rent! </div>
+                    {% endif %}
+                </div>
+
+                <h2><a id="title" class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                <div id="post-body" class="media-body">
+                <!-- <div class="article-metadata">
+                    <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                    <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                </div> -->
+                <div class="row">
+                    <div class="col-7">
+                        <img src="../static/house_pictures/{{post.outside_view}}" style="width:100%">
+                    </div>
+                    <div class="col">
+                        <img id="bed-icon" src="../static/house_pictures/bed icon.png" alt="bed icon">
+                        <p id="beds" class="article-content">{{ post.number_of_bedrooms }} Bedrooms</p>
+                        <img id="bath-icon" src="../static/house_pictures/bath icon.png" alt="bath icon">
+                        <p id="baths" class="article-content">{{ post.number_of_bathrooms }} Bathrooms</p>
+                        <div class="row">
+                            <div class="col">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt" fill="#1f7a8c">
+                                    <path fill-rule="evenodd" d="M12.166 8.94C12.696 7.867 13 6.862 13 6A5 5 0 0 0 3 6c0 .862.305 1.867.834 2.94.524 1.062 1.234 2.12 1.96 3.07A31.481 31.481 0 0 0 8 14.58l.208-.22a31.493 31.493 0 0 0 1.998-2.35c.726-.95 1.436-2.008 1.96-3.07zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                                    <path fill-rule="evenodd" d="M8 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                                </svg>
+                            </div>
+                            <div class="col-11">
+                                <p id="address" class="article-content">{{ post.address_line_1 }}</p>
+                                {% if post.address_line_2 %}
+                                    <p id="address2" class="article-content">{{ post.address_line_2 }}</p>
+                                {% endif %}
+                                <p id="address3" class="article-content">{{ post.city }}, {{ post.state_province_region }}<br>{{ post.zip_postal_code }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <!--    <p id="utilities-title" class="article-content">Utilities</p>
+                <hr in="line"></hr>
+                <ol id="utility-list">
+                    {% for amenity in post.amenities %}
+                        <li id="utility"class="article-content">{{ amenity }}</li>
+                    {% endfor %}
+                </ol>
+                <p id="description-title" class="article-content">Description</p>
+                <hr in="line"></hr>
+                <p id="description" class="article-content">{{ post.content }}</p>
+            </div>-->
+        </article>
+        {% endfor %}
+    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+            {% if posts.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+    </div>
+        <div class="col-md-4">
+            <!-- <font face="verdana" size='3'> Mapbox maps in your apps</font> <br/><br/> -->
+            <!-- <input class="map-inputBox" type="number" id="Longitude" placeholder="Enter Longitude" />
+            <input class="map-inputBox" type="number" id="Latitude" placeholder="Enter Latitude" /> -->
+            <!-- <button class="map-button" onclick="getLonLat()"> Submit</button> -->
+            <div id='map' style='width: 95%; height:500px;'></div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

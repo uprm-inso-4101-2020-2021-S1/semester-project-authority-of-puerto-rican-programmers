@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/styles/index.css') }}">
+   <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Amaranth:ital,wght@1,400;1,700&family=Bitter:wght@300&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <title>Welcome to Houser</title>
+</head>
+     <div>
+          <div class="first-section">
+              <div class="black-effect">
+                <div class="top-buttons">
+                <button class="home">houser</button>
+                    {% if current_user.is_authenticated %}
+                         <form class="login" method="get" action="/logout">
+                            <button class="login">Logout</button>
+                        </form>
+                    {% else %}
+                        <form class="login" method="get" action="/login">
+                            <button class="login">Log In</button>
+                        </form>
+                         <form class="register" method="get" action="/register">
+                            <button class="register">Register</button>
+                        </form>
+                    {% endif %}
+                </div>
+             <div class = "home-search">
+              <ul>
+                  <li class="rent"><a href="{{ url_for('filter_rent') }}">Rent</a></li>
+                  <li class="buy"><a href="{{ url_for('filter_buy') }}">Buy</a></li>
+                  <li class="see-all"><a href="{{ url_for('home') }}">See All</a></li>
+              </ul>
+                 <form class ="form-inline my-2 my-lg-0" method="GET">
+                    <input type="text" placeholder="Country, city, zip code... "/>
+                    <button class="search-button">Search</button>
+                 </form>
+              <br/>
+                 <form method="get" action="/nearby">
+                    <button class="near-me">Find listings near me</button>
+                 </form>
+             </div>
+              </div>
+          </div>
+         <div class="second-section">
+             <h1>Search listings by municipality</h1>
+         </div>
+      <body>
+          <div class="pueblo-listing">
+              <ul>
+                  <li><a href="{{ url_for('city_filter_Adjuntas') }}">Adjuntas</a></li>
+                    <li><a href="{{ url_for('city_filter_Aguada') }}">Aguada</a></li>
+                    <li><a href="{{ url_for('city_filter_Aguadilla') }}">Aguadilla</a></li>
+                    <li><a href="{{ url_for('city_filter_Aguas_Buenas') }}">Aguas Buenas</a></li>
+                    <li><a href="{{ url_for('city_filter_Aibonito') }}">Aibonito</a></li>
+                    <li><a href="{{ url_for('city_filter_Anasco') }}">Añasco</a></li>
+                    <li><a href="{{ url_for('city_filter_Arecibo') }}">Arecibo</a></li>
+                    <li><a href="{{ url_for('city_filter_Arroyo') }}">Arroyo</a></li>
+                    <li><a href="{{ url_for('city_filter_Barceloneta') }}">Barceloneta</a></li>
+                    <li><a href="{{ url_for('city_filter_Barranquitas') }}">Barranquitas</a></li>
+                    <li><a href="{{ url_for('city_filter_Bayamon') }}">Bayamón</a></li>
+                    <li><a href="{{ url_for('city_filter_Cabo_Rojo') }}">Cabo Rojo</a></li>
+                    <li><a href="{{ url_for('city_filter_Caguas') }}">Caguas</a></li>
+                    <li><a href="{{ url_for('city_filter_Camuy') }}">Camuy</a></li>
+                    <li><a href="{{ url_for('city_filter_Canovanas') }}">Canóvanas</a></li>
+                    <li><a href="{{ url_for('city_filter_Carolina') }}">Carolina</a></li>
+                    <li><a href="{{ url_for('city_filter_Catano') }}">Cataño</a></li>
+                    <li><a href="{{ url_for('city_filter_Cayey') }}">Cayey</a></li>
+                    <li><a href="{{ url_for('city_filter_Ceiba') }}">Ceiba</a></li>
+                    <li><a href="{{ url_for('city_filter_Ciales') }}">Ciales</a></li>
+                    <li><a href="{{ url_for('city_filter_Cidra') }}">Cidra</a></li>
+                    <li><a href="{{ url_for('city_filter_Coamo') }}">Coamo</a></li>
+                    <li><a href="{{ url_for('city_filter_Comerio') }}">Comerío</a></li>
+                    <li><a href="{{ url_for('city_filter_Corozal') }}">Corozal</a></li>
+                    <li><a href="{{ url_for('city_filter_Culebra') }}">Culebra</a></li>
+                    <li><a href="{{ url_for('city_filter_Dorado') }}">Dorado</a></li>
+                    <li><a href="{{ url_for('city_filter_Fajardo') }}">Fajardo</a></li>
+                    <li><a href="{{ url_for('city_filter_Florida') }}">Florida</a></li>
+                    <li><a href="{{ url_for('city_filter_Guanica') }}">Guánica</a></li>
+                    <li><a href="{{ url_for('city_filter_Guayama') }}">Guayama</a></li>
+                    <li><a href="{{ url_for('city_filter_Guayanilla') }}">Guayanilla</a></li>
+                    <li><a href="{{ url_for('city_filter_Guaynabo') }}">Guaynabo</a></li>
+                    <li><a href="{{ url_for('city_filter_Gurabo') }}">Gurabo</a></li>
+                    <li><a href="{{ url_for('city_filter_Hatillo') }}">Hatillo</a></li>
+                    <li><a href="{{ url_for('city_filter_Hormigueros') }}">Hormigueros</a></li>
+                    <li><a href="{{ url_for('city_filter_Humacao') }}">Humacao</a></li>
+                    <li><a href="{{ url_for('city_filter_Isabela') }}">Isabela</a></li>
+                    <li><a href="{{ url_for('city_filter_Jayuya') }}">Jayuya</a></li>
+                    <li><a href="{{ url_for('city_filter_Juana_Diaz') }}">Juana Díaz</a></li>
+                    <li><a href="{{ url_for('city_filter_Juncos') }}">Juncos</a></li>
+                    <li><a href="{{ url_for('city_filter_Lajas') }}">Lajas</a></li>
+                    <li><a href="{{ url_for('city_filter_Lares') }}">Lares</a></li>
+                    <li><a href="{{ url_for('city_filter_Las_Marias') }}">Las Marías</a></li>
+                    <li><a href="{{ url_for('city_filter_Las_Piedras') }}">Las Piedras</a></li>
+                    <li><a href="{{ url_for('city_filter_Loiza') }}">Loíza</a></li>
+                    <li><a href="{{ url_for('city_filter_Luquillo') }}">Luquillo</a></li>
+                    <li><a href="{{ url_for('city_filter_Manati') }}">Manatí</a></li>
+                    <li><a href="{{ url_for('city_filter_Maricao') }}">Maricao</a></li>
+                    <li><a href="{{ url_for('city_filter_Maunabo') }}">Maunabo</a></li>
+                    <li><a href="{{ url_for('city_filter_Mayaguez') }}">Mayagüez</a></li>
+                    <li><a href="{{ url_for('city_filter_Moca') }}">Moca</a></li>
+                    <li><a href="{{ url_for('city_filter_Morovis') }}">Morovis</a></li>
+                    <li><a href="{{ url_for('city_filter_Naguabo') }}">Naguabo</a></li>
+                    <li><a href="{{ url_for('city_filter_Naranjito') }}">Naranjito</a></li>
+                    <li><a href="{{ url_for('city_filter_Orocovis') }}">Orocovis</a></li>
+                    <li><a href="{{ url_for('city_filter_Patillas') }}">Patillas</a></li>
+                    <li><a href="{{ url_for('city_filter_Penuelas') }}">Peñuelas</a></li>
+                    <li><a href="{{ url_for('city_filter_Ponce') }}">Ponce</a></li>
+                    <li><a href="{{ url_for('city_filter_Quebradillas') }}">Quebradillas</a></li>
+                    <li><a href="{{ url_for('city_filter_Rincon') }}">Rincón</a></li>
+                    <li><a href="{{ url_for('city_filter_Rio_Grande') }}">Río Grande</a></li>
+                    <li><a href="{{ url_for('city_filter_Sabana_Grande') }}">Sabana Grande</a></li>
+                    <li><a href="{{ url_for('city_filter_Salinas') }}">Salinas</a></li>
+                    <li><a href="{{ url_for('city_filter_San_German') }}">San Germán</a></li>
+                    <li><a href="{{ url_for('city_filter_San_Juan') }}">San Juan</a></li>
+                    <li><a href="{{ url_for('city_filter_San_Lorenzo') }}">San Lorenzo</a></li>
+                    <li><a href="{{ url_for('city_filter_San_Sebastian') }}">San Sebastián</a></li>
+                    <li><a href="{{ url_for('city_filter_Santa_Isabel') }}">Santa Isabel</a></li>
+                    <li><a href="{{ url_for('city_filter_Toa_Alta') }}">Toa Alta</a></li>
+                    <li><a href="{{ url_for('city_filter_Toa_Baja') }}">Toa Baja</a></li>
+                    <li><a href="{{ url_for('city_filter_Trujillo_Alto') }}">Trujillo Alto</a></li>
+                    <li><a href="{{ url_for('city_filter_Utuado') }}">Utuado</a></li>
+                    <li><a href="{{ url_for('city_filter_Vega_Alta') }}">Vega Alta</a></li>
+                    <li><a href="{{ url_for('city_filter_Vega_Baja') }}">Vega Baja</a></li>
+                    <li><a href="{{ url_for('city_filter_Vieques') }}">Vieques</a></li>
+                    <li><a href="{{ url_for('city_filter_Villalba') }}">Villalba</a></li>
+                    <li><a href="{{ url_for('city_filter_Yabucoa') }}">Yabucoa</a></li>
+                    <li><a href="{{ url_for('city_filter_Yauco') }}">Yauco</a></li>
+              </ul>
+          </div>
+          <div class="cards">
+          <div class="features">
+            <h1>Want to sell or rent out your property?</h1>
+            <img src="../static/listing.jpeg" alt="Listings" />
+            <div class="overlay">
+              <div class="text"><a href="{{ url_for('new_post') }}">Add a Listing</a></div>
+            </div>
+          </div>
+          <div class="features">
+            <h1>Want to add listings to your Favorites?</h1>
+            <img src="../static/fav.jpeg" alt="Fav" />
+            <div class="overlay">
+              <div class="text"><a href="{{ url_for('login') }}">Sign In</a></div>
+            </div>
+          </div>
+          <div class="features">
+            <h1>Search areas near your favorite hot spots?</h1>
+          <img src="../static/SJ.png" alt="SJ" />
+              <div class="overlay">
+                <div class="text"><a href="{{ url_for('register') }}">Sign Up</a></div>
+            </div>
+          </div>
+              </div>
+      </body>
+  </div>
+
+</html>

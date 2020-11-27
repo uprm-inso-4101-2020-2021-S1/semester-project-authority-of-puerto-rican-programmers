@@ -1,0 +1,412 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% block filter %}{% endblock %}
+    <!-- map links -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+
+    <style>
+        .map-container {
+            max-width: 40%;
+            max-height: 10%;
+            margin-left: 60%;
+            margin-right: auto;
+            position: fixed;
+        }
+        .map-inputBox {
+            width: 50%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        .map-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        .mapboxgl-popup {
+            max-width: 400px;
+            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        }
+    </style>
+<div id="post" class="row justify-content-md-center">
+    <div class="col-md-6">
+        <article id="article-box" class="media content-section">
+        <div  id="profile-row" class="media-body">
+            <div class="row">
+                <div id="pic-col" class="col-">
+                    <img id="profile-pic" class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}" style="width:30px;height:30px;">
+                </div>
+                <div id="profile-col" class="col">
+                    <div class="article-metadata">
+                        <a id="username" class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                        {% if post.author == current_user %}
+                            <div>
+                                <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+                                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if post.buy_or_rent ==  "Buy" %}
+                    <div id="rent-buy" class="col-"> For Sale! </div>
+                {% else %}
+                    <div id="rent-buy" class="col-"> For Rent! </div>
+                {% endif %}
+            </div>
+
+            <h2 id="title" class="article-title">{{ post.title }}</h2>
+            <div id="post-body" class="media-body">
+            <!-- <div class="article-metadata">
+                <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div> -->
+            <div class="slideshow-container">
+
+                <!-- Full-width images with number and caption text -->
+                <div class="mySlides fade-in">
+                <img src="../static/house_pictures/{{post.master_bedroom}}" style="width:100%">
+                </div>
+
+                <div class="mySlides fade-in">
+                <img src="../static/house_pictures/{{post.master_bathroom}}" style="width:100%">
+                </div>
+
+                <div class="mySlides fade-in">
+                <img src="../static/house_pictures/{{post.kitchen}}" style="width:100%">
+                </div>
+                {% if post.house_pictures is defined %}
+                    {% for optional_pic in post.house_pictures %}
+                        <div class="mySlides fade-in">
+                            <!--<img src="../static/house_pictures/{{optional_pic}}" style="width:100%">-->
+                            <!----> <img src="{{ url_for('static', filename='house_pictures/') + optional_pic }}">
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="mySlides fade-in">
+                        <img class="img-thumbnail article-img form-group" src="{{ url_for('static', filename='house_pictures/default_house.jpg') }}">
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Next and previous buttons -->
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+            </div>
+            <br>
+
+            <!-- The dots/circles -->
+            <div style="text-align:center">
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+            </div>
+
+            <style>
+                * {box-sizing:border-box}
+
+                /* Slideshow container */
+                .slideshow-container {
+                max-width: 1000px;
+                position: relative;
+                margin: auto;
+                }
+
+                /* Hide the images by default */
+                .mySlides {
+                display: none;
+                }
+
+                /* Next & previous buttons */
+                .prev, .next {
+                cursor: pointer;
+                position: absolute;
+                top: 50%;
+                width: auto;
+                margin-top: -22px;
+                padding: 16px;
+                color: white;
+                font-weight: bold;
+                font-size: 18px;
+                transition: 0.6s ease;
+                border-radius: 0 3px 3px 0;
+                user-select: none;
+                }
+
+                /* Position the "next button" to the right */
+                .next {
+                right: 0;
+                border-radius: 3px 0 0 3px;
+                }
+
+                /* On hover, add a black background color with a little bit see-through */
+                .prev:hover, .next:hover {
+                background-color: rgba(0,0,0,0.8);
+                }
+
+                /* The dots/bullets/indicators */
+                .dot {
+                cursor: pointer;
+                height: 15px;
+                width: 15px;
+                margin: 0 2px;
+                background-color: #bbb;
+                border-radius: 50%;
+                display: inline-block;
+                transition: background-color 0.6s ease;
+                }
+
+                .active, .dot:hover {
+                background-color: #717171;
+                }
+
+                /* Fading animation */
+                .fade-in {
+                animation: fadeIn ease 1.5s;
+                -webkit-animation: fadeIn ease 1.5s;
+                -moz-animation: fadeIn ease 1.5s;
+                -o-animation: fadeIn ease 1.5s;
+                -ms-animation: fadeIn ease 1.5s;
+                }
+                @keyframes fadeIn {
+                0% {opacity:0;}
+                100% {opacity:1;}
+                }
+
+                @-moz-keyframes fadeIn {
+                0% {opacity:0;}
+                100% {opacity:1;}
+                }
+
+                @-webkit-keyframes fadeIn {
+                0% {opacity:0;}
+                100% {opacity:1;}
+                }
+
+                @-o-keyframes fadeIn {
+                0% {opacity:0;}
+                100% {opacity:1;}
+                }
+
+                @-ms-keyframes fadeIn {
+                0% {opacity:0;}
+                100% {opacity:1;}
+                }
+            </style>
+            <script>
+                var slideIndex = 1;
+                showSlides(slideIndex);
+
+                // Next/previous controls
+                function plusSlides(n) {
+                showSlides(slideIndex += n);
+                }
+
+                // Thumbnail image controls
+                function currentSlide(n) {
+                showSlides(slideIndex = n);
+                }
+
+                function showSlides(n) {
+                var i;
+                var slides = document.getElementsByClassName("mySlides");
+                var dots = document.getElementsByClassName("dot");
+                if (n > slides.length) {slideIndex = 1}
+                if (n < 1) {slideIndex = slides.length}
+                for (i = 0; i < slides.length; i++) {
+                    slides[i].style.display = "none";
+                }
+                for (i = 0; i < dots.length; i++) {
+                    dots[i].className = dots[i].className.replace(" active", "");
+                }
+                slides[slideIndex-1].style.display = "block";
+                dots[slideIndex-1].className += " active";
+                }
+            </script>
+            <div class="row">
+                <div class="col">
+                    <a id="city" class="article-title">{{ post.city }}, {{ post.state_province_region }}</a>
+                </div>
+                <div class="col">
+                {% if post.buy_or_rent ==  "Buy" %}
+                    <p id="price" class="article-content">{{ "${:,.2f}".format(post.price) }}</p>
+                {% else %}
+                    <p id="price" class="article-content">{{ "${:,.2f}".format(post.price) }}/mo</p>
+                {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-7">
+                    <img id="bed-icon" src="../static/house_pictures/bed icon.png" alt="bed icon">
+                    <p id="beds" class="article-content">{{ post.number_of_bedrooms }} Bedrooms</p>
+                </div>
+                <div class="col">
+                    <img id="bath-icon" src="../static/house_pictures/bath icon.png" alt="bath icon">
+                    <p id="baths" class="article-content">{{ post.number_of_bathrooms }} Bathrooms</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt" fill="#1f7a8c">
+                        <path fill-rule="evenodd" d="M12.166 8.94C12.696 7.867 13 6.862 13 6A5 5 0 0 0 3 6c0 .862.305 1.867.834 2.94.524 1.062 1.234 2.12 1.96 3.07A31.481 31.481 0 0 0 8 14.58l.208-.22a31.493 31.493 0 0 0 1.998-2.35c.726-.95 1.436-2.008 1.96-3.07zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                        <path fill-rule="evenodd" d="M8 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                    </svg>
+                </div>
+                <div class="col-11">
+                    <p id="address" class="article-content">{{ post.address_line_1 }}</p>
+                    {% if post.address_line_2 %}
+                        <p id="address2" class="article-content">{{ post.address_line_2 }}</p>
+                    {% endif %}
+                    <p id="address3" class="article-content">{{ post.city }}, {{ post.state_province_region }}<br>{{ post.zip_postal_code }}</p>
+                </div>
+            </div>
+            <p id="utilities-title" class="article-content">Amenities</p>
+            <hr in="line"></hr>
+            <ol id="utility-list">
+            {% for amenity in post.amenities %}
+                <li id="utility"class="article-content">{{ amenity }}</li>
+            {% endfor %}
+            </ol>
+            <p id="description-title" class="article-content">Description</p>
+            <hr in="line"></hr>
+            <p id="description" class="article-content">{{ post.content }}</p>
+        </div>
+        </article>
+    </div>
+    <div class="col-md-4">
+        <!-- <font face="verdana" size='3'> Mapbox maps in your apps</font> <br/><br/> -->
+        <!-- <input class="map-inputBox" type="number" id="Longitude" placeholder="Enter Longitude" />
+        <input class="map-inputBox" type="number" id="Latitude" placeholder="Enter Latitude" /> -->
+        <!-- <button class="map-button" onclick="getLonLat()"> Submit</button> -->
+        <div id='map' style='width: 95%; height:500px;'></div>
+    </div>
+</div>
+        <!-- Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Are you sure you want to delete this post?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+                    <input class="btn btn-danger" type="submit" value="Delete">
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <style>
+            #article-box{
+                background-color: #e1e5f2;
+            }
+            #profile-pic{
+                position: relative;
+                left: 10px;
+            }
+            #profile-col{
+                position: relative;
+                left: -10px;
+            }
+            #rent-buy{
+                text-align: right;
+                font-size: 30px;
+                padding-left: 5px;
+                padding-right: 5px;
+                color: white;
+                font-weight: bolder;
+                background-color: #1f7a8c;
+                border-radius: 5px
+            }
+            #username{
+                color: #1f7a8c;
+            }
+            #username:hover{
+                color: white;
+            }
+            #slideshow{
+                padding-bottom: 25px;
+            }
+            #address{
+                position: relative;
+                left: -35px;
+                margin-bottom: 0px;
+            }
+            #address2{
+                position: relative;
+                left: -35px;
+                margin-bottom: 0px;
+            }
+            #address3{
+                position: relative;
+                left: -35px;
+                margin-bottom: 0px;
+            }
+            #utilities-title{
+                position: relative;
+                top: 15px;
+                font-size: 25px;
+                color: #022b3a;
+                font-weight: bold;
+            }
+            #description-title{
+                position: relative;
+                top: 15px;
+                font-size: 25px;
+                color: #022b3a;
+                font-weight: bold;
+            }
+            #line{
+                margin-top: 0em;
+            }
+            #utility-list{
+                padding-left: 0px;
+                column-count: 2;
+                column-gap: 100px;
+                list-style-type: none;
+            }
+            #title{
+                padding-top: 0px;
+                color: #022b3a;
+            }
+            #price{
+                color: #022b3a;
+                font-size: 20px;
+                font-weight: bold;
+                text-align: right;
+                padding-bottom: 5px;
+            }
+            #city{
+                color: #022b3a;
+                font-size: 20px;
+                font-weight: bold;
+                padding-bottom: 5px;
+            }
+            #bed-icon{
+                height: 50px;
+                width: 62px;
+            }
+            #bath-icon{
+                height: 50px;
+                width: 33px;
+            }
+            #beds{
+                font-size: 27px;
+            }
+            #baths{
+                font-size: 27px;
+            }
+        </style>
+{% endblock content %}
