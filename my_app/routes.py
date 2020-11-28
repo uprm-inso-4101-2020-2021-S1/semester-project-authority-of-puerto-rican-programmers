@@ -1939,6 +1939,7 @@ def city_filter_San_Sebastian():
     return render_template('home.html', posts=posts, mapbox_access_token=mapbox_access_token, locations=list)
 
 
+#fixed
 @app.route('/Santa%Isabel', methods=['GET'])
 def city_filter_Santa_Isabel():
     mapbox_access_token = 'pk.eyJ1Ijoiam9zZS1zYW50aWFnbzkwIiwiYSI6ImNraGlpaHlzMTFienAzMHBmdms1ODNjcTEifQ.mA4WMGbNBOQgaKcXy2FoPg'
@@ -1956,7 +1957,7 @@ def city_filter_Santa_Isabel():
     for x in range(len(longiList)):
         list.append(Location(titleList[x], longiList[x], latiList[x], priceList[x]))
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.filter(Post.city.contains('San Isabel')).order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+    posts = Post.query.filter(Post.city.contains('Santa Isabel')).order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
     return render_template('home.html', posts=posts, mapbox_access_token=mapbox_access_token, locations=list)
 
 
